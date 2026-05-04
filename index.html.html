@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rafım v5 — Pro Performans</title>
+<style>
+:root {
+  --bg: #0a0514;
+  --side: #120b24;
+  --purple: #9d4edd;
+  --green: #00f5d4;
+  --text: #e0e0e0;
+  --card: #1d152e;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+/* HEADER */
+.app-header { background: var(--side); height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 25px; border-bottom: 2px solid var(--purple); }
+.logo { font-size: 22px; font-weight: 900; color: var(--green); text-shadow: 0 0 10px rgba(0,245,212,0.3); }
+
+/* LAYOUT */
+.main-container { display: flex; flex: 1; overflow: hidden; }
+
+/* SIDEBAR */
+.sidebar { width: 260px; background: var(--side); display: flex; flex-direction: column; border-right: 1px solid rgba(157, 78, 221, 0.2); }
+.sidebar-h { padding: 20px; font-size: 11px; color: var(--purple); font-weight: bold; letter-spacing: 2px; text-transform: uppercase; }
+
+.cat-item { 
+    padding: 12px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    border-left: 3px solid transparent; transition: 0.2s; font-size: 14px;
+}
+.cat-item:hover { background: rgba(157, 78, 221, 0.1); }
+.cat-item.active { background: rgba(157, 78, 221, 0.2); border-left-color: var(--green); color: white; }
+
+.cat-tools { display: none; gap: 8px; }
+.cat-item:hover .cat-tools { display: flex; }
+
+.btn-add-cat { margin: 15px 20px; padding: 10px; background: none; border: 1px dashed var(--purple); color: var(--purple); cursor: pointer; border-radius: 6px; }
+
+/* CONTENT */
+.content { flex: 1; overflow-y: auto; padding: 30px; background: radial-gradient(circle at top, #160d2b, #0a0514); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 25px; }
+
+/* BOOK CARD */
+.book { width: 130px; position: relative; cursor: pointer; }
+.cover { 
+    width: 130px; height: 185px; background: var(--card); border-radius: 8px; overflow: hidden; 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); transition: 0.3s;
+}
+.book:hover .cover { transform: translateY(-5px); border-color: var(--green); }
+.cover img { width: 100%; height: 100%; object-fit: cover; }
+.btitle { margin-top: 10px; font-size: 12px; text-align: center; color: #bbb; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.del-b { position: absolute; -10px; right: -10px; background: #ff4d4d; border: none; color: white; width: 22px; height: 22px; border-radius: 50%; cursor: pointer; display: none; z-index: 10; }
+.book:hover .del-b { display: block; }
+
+/* READER */
+#reader { position: fixed; inset: 0; background: #000; z-index: 2000; display: none; flex-direction: column; }
+.r-top { background: var(--side); height: 50px; display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid var(--purple); }
+
+/* LOADER */
+.loading { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
+.spinner { width: 40px; height: 40px; border: 4px solid var(--purple); border-top-color: var(--green); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.btn-up { background: var(--green); color: var(--bg); border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="logo">RAFIM PRO</div>
+  <button class="btn-up" onclick="document.getElementById('f-in').click()">+ Kitap Yükle</button>
+</header>
+
+<div class="main-container">
+  <aside class="sidebar">
+    <div class="sidebar-h">Listelerim</div>
+    <div id="cat-list"></div>
+    <button class="btn-add-cat" onclick="addCat()">+ Yeni Liste</button>
+  </aside>
+
+  <main class="content">
+    <h2 id="view-title" style="margin-bottom:25px; font-size:24px;">Tüm Kitaplar</h2>
+    <div id="grid" class="grid"></div>
+  </main>
+</div>
+
+<div id="reader">
+  <div class="r-top">
+    <button onclick="closeReader()" style="background:none; border:1px solid var(--purple); color:var(--purple); cursor:pointer; padding:5px 15px; border-radius:4px;">Kapat</button>
+    <div id="r-name" style="margin: 0 auto; color: var(--green); font-weight: bold;">Kitap</div>
+    <div style="display:flex; gap:10px;">
+        <button onclick="changePage(-1)" style="color:var(--green); background:none; border:none; cursor:pointer; font-size:20px;">◀</button>
+        <span id="p-num" style="min-width: 60px; text-align: center; line-height: 25px;">0 / 0</span>
+        <button onclick="changePage(1)" style="color:var(--green); background:none; border:none; cursor:pointer; font-size:20px;">▶</button>
+    </div>
+  </div>
+  <div id="r-canvas" style="flex:1; overflow:auto; display:flex; justify-content:center; padding:20px; background:#1a1a1a;"></div>
+</div>
+
+<div class="loading" id="loader"><div class="spinner"></div><p style="margin-top:20px; color:var(--green);">İşlem Yapılıyor...</p></div>
+<input type="file" id="f-in" accept=".pdf" hidden>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+const pdfjs = window['pdfjs-dist/build/pdf'];
+pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+let db, currentCatId = 'all', categories = [], books = [];
+
+// DATABASE
+const req = indexedDB.open("RafimV5", 1);
+req.onupgradeneeded = e => {
+  const d = e.target.result;
+  d.createObjectStore("books", { keyPath: "id" });
+  d.createObjectStore("cats", { keyPath: "id" });
+};
+req.onsuccess = e => { db = e.target.result; init(); };
+
+async function init() {
+  const tx = db.transaction(["books", "cats"], "readonly");
+  books = await new Promise(r => tx.objectStore("books").getAll().onsuccess = e => r(e.target.result));
+  categories = await new Promise(r => tx.objectStore("cats").getAll().onsuccess = e => r(e.target.result));
+  if (!categories.find(c => c.id === 'all')) categories.unshift({ id: 'all', name: 'Tüm Kitaplar' });
+  renderCats(); renderBooks();
+}
+
+// CATEGORY
+function renderCats() {
+  const cont = document.getElementById('cat-list');
+  cont.innerHTML = '';
+  categories.forEach(c => {
+    const d = document.createElement('div');
+    d.className = `cat-item ${currentCatId === c.id ? 'active' : ''}`;
+    d.onclick = () => { currentCatId = c.id; renderCats(); renderBooks(); };
+    d.innerHTML = `<span>${c.name}</span>
+      ${c.id !== 'all' ? `<div class="cat-tools">
+        <span onclick="editCat('${c.id}', event)">✎</span>
+        <span onclick="delCat('${c.id}', event)" style="color:#ff4d4d">✕</span>
+      </div>` : ''}`;
+    cont.appendChild(d);
+  });
+}
+
+function addCat() {
+  const n = prompt("Liste adı:");
+  if (!n) return;
+  const c = { id: 'c' + Date.now(), name: n };
+  db.transaction("cats", "readwrite").objectStore("cats").add(c).onsuccess = () => { categories.push(c); renderCats(); };
+}
+
+function editCat(id, e) {
+  e.stopPropagation();
+  const c = categories.find(x => x.id === id);
+  const n = prompt("Yeni ad:", c.name);
+  if (!n) return;
+  c.name = n;
+  db.transaction("cats", "readwrite").objectStore("cats").put(c).onsuccess = () => renderCats();
+}
+
+function delCat(id, e) {
+  e.stopPropagation();
+  if (!confirm("Liste silinsin mi?")) return;
+  db.transaction("cats", "readwrite").objectStore("cats").delete(id).onsuccess = () => {
+    categories = categories.filter(x => x.id !== id);
+    if (currentCatId === id) currentCatId = 'all';
+    renderCats(); renderBooks();
+  };
+}
+
+// BOOKS & UPLOAD
+document.getElementById('f-in').onchange = e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  document.getElementById('loader').style.display = 'flex';
+
+  const reader = new FileReader();
+  reader.onload = async function() {
+    try {
+      const data = new Uint8Array(this.result);
+      const doc = await pdfjs.getDocument({ data }).promise;
+      const page = await doc.getPage(1);
+      const canvas = document.createElement('canvas');
+      const view = page.getViewport({ scale: 0.2 });
+      canvas.width = view.width; canvas.height = view.height;
+      await page.render({ canvasContext: canvas.getContext('2d'), viewport: view }).promise;
+
+      const book = {
+        id: 'b' + Date.now(),
+        title: file.name.replace(".pdf", ""),
+        data: data, // Uint8Array olarak saklamak daha stabildir
+        cover: canvas.toDataURL('image/jpeg', 0.7), // Sıkıştırma ekledik
+        catId: currentCatId === 'all' ? 'all' : currentCatId,
+        curPage: 1
+      };
+
+      const tx = db.transaction("books", "readwrite");
+      tx.objectStore("books").add(book).onsuccess = () => {
+        books.push(book); renderBooks();
+        document.getElementById('loader').style.display = 'none';
+      };
+    } catch (err) {
+      alert("Hata: PDF işlenemedi. Dosya çok büyük veya bellek yetersiz.");
+      document.getElementById('loader').style.display = 'none';
+    }
+  };
+  reader.readAsArrayBuffer(file);
+};
+
+function renderBooks() {
+  const g = document.getElementById('grid');
+  document.getElementById('view-title').innerText = categories.find(c => c.id === currentCatId).name;
+  g.innerHTML = '';
+  const f = currentCatId === 'all' ? books : books.filter(b => b.catId === currentCatId);
+  f.forEach(b => {
+    const d = document.createElement('div');
+    d.className = 'book';
+    d.onclick = () => openReader(b);
+    d.innerHTML = `<button class="del-b" onclick="delBook('${b.id}', event)">✕</button>
+      <div class="cover"><img src="${b.cover}"></div>
+      <div class="btitle">${b.title}</div>`;
+    g.appendChild(d);
+  });
+}
+
+function delBook(id, e) {
+  e.stopPropagation();
+  if (!confirm("Kitap silinsin mi?")) return;
+  db.transaction("books", "readwrite").objectStore("books").delete(id).onsuccess = () => {
+    books = books.filter(x => x.id !== id); renderBooks();
+  };
+}
+
+// READER
+let aPdf = null, aBook = null, p = 1;
+
+async function openReader(b) {
+  document.getElementById('loader').style.display = 'flex';
+  aBook = b; p = b.curPage || 1;
+  try {
+    aPdf = await pdfjs.getDocument({ data: b.data }).promise;
+    document.getElementById('r-name').innerText = b.title;
+    document.getElementById('reader').style.display = 'flex';
+    draw();
+  } catch (e) { alert("Açılış hatası."); }
+  document.getElementById('loader').style.display = 'none';
+}
+
+async function draw() {
+  const page = await aPdf.getPage(p);
+  const cont = document.getElementById('r-canvas');
+  cont.innerHTML = '';
+  const canvas = document.createElement('canvas');
+  const v = page.getViewport({ scale: window.innerWidth < 800 ? 1 : 1.5 });
+  canvas.width = v.width; canvas.height = v.height;
+  cont.appendChild(canvas);
+  await page.render({ canvasContext: canvas.getContext('2d'), viewport: v }).promise;
+  document.getElementById('p-num').innerText = `${p} / ${aPdf.numPages}`;
+}
+
+function changePage(d) {
+  const n = p + d;
+  if (!aPdf || n < 1 || n > aPdf.numPages) return;
+  p = n; draw();
+  aBook.curPage = p;
+  db.transaction("books", "readwrite").objectStore("books").put(aBook);
+}
+
+function closeReader() { document.getElementById('reader').style.display = 'none'; aPdf = null; }
+</script>
+</body>
+</html>
