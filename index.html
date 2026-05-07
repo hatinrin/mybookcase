@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Rafım</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -16,10 +16,10 @@
   --border:#CAE0BE;--border2:#DDEEDD;
   --shelf:#D0E5C2;--shelf-edge:#88A878;--shelf-top:#A8C898;
 }
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;}
 
 /* ── LIBRARY ── */
-#lib{display:flex;flex-direction:column;min-height:100vh;}
+#lib{display:flex;flex-direction:column;min-height:100vh;min-height:100dvh;}
 #lib.hide{display:none;}
 .hdr{background:var(--surface);padding:14px 36px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--green3);box-shadow:0 2px 12px rgba(78,154,106,.09);position:sticky;top:0;z-index:50;}
 .hdr-left{display:flex;align-items:center;gap:12px;}
@@ -65,7 +65,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .stat-l{font-size:9.5px;color:var(--text3);letter-spacing:.4px;text-transform:uppercase;font-weight:500;margin-top:1px;}
 
 /* ── READER ── */
-#rdr{display:none;flex-direction:column;height:100vh;overflow:hidden;}
+#rdr{display:none;flex-direction:column;position:fixed;inset:0;background:var(--bg);z-index:100;}
 #rdr.show{display:flex;}
 .rtop{background:var(--surface);height:50px;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid var(--border);flex-shrink:0;box-shadow:0 1px 6px rgba(78,154,106,.07);}
 .back-btn{background:var(--green4);border:1px solid var(--green3);color:var(--green);padding:6px 14px;border-radius:14px;cursor:pointer;font-size:12px;font-family:inherit;font-weight:600;transition:all .15s;}
@@ -77,9 +77,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .ibtn.on{color:var(--pink);background:var(--pink-pale);}
 .ibtn svg{width:16px;height:16px;fill:currentColor;display:block;}
 /* Layout */
-.rbody{flex:1;display:flex;overflow:hidden;}
+.rbody{flex:1;display:flex;overflow:hidden;position:relative;}
 /* Sidebar */
-.rside{width:258px;background:var(--surface);border-right:1px solid var(--border2);display:flex;flex-direction:column;transform:translateX(-258px);transition:transform .28s ease;flex-shrink:0;overflow:hidden;}
+.rside{position:absolute;left:0;top:0;bottom:0;width:258px;background:var(--surface);border-right:1px solid var(--border2);display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .28s ease;z-index:40;box-shadow:2px 0 16px rgba(0,0,0,.1);}
 .rside.show{transform:translateX(0);}
 .stabs{display:flex;border-bottom:1px solid var(--border2);}
 .stab{flex:1;padding:10px 4px;background:none;border:none;color:var(--text3);cursor:pointer;font-size:9.5px;font-family:inherit;transition:all .15s;letter-spacing:.7px;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:700;text-transform:uppercase;}
@@ -101,12 +101,12 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .empty{color:var(--text3);font-size:12px;padding:20px 6px;text-align:center;line-height:1.8;}
 /* Reading area */
 .rarea{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;}
-/* rcontent: block scroll container — NO flex centering (causes inaccessible overflow) */
+/* rcontent: block scroll container */
 .rcontent{flex:1;overflow:auto;padding:24px 16px;position:relative;}
 .theme-light .rcontent{background:#FFFDF8;}
 .theme-sepia .rcontent{background:#F5EDD8;}
 .theme-dark .rcontent{background:#181C14;}
-/* Click zones — absolute on rarea so they stay fixed over scroll content */
+/* Click zones */
 .czone{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:64px;z-index:15;cursor:pointer;display:flex;align-items:center;opacity:0;transition:opacity .2s;}
 .rarea:hover .czone{opacity:.55;}
 .czone:hover{opacity:1!important;}
@@ -114,14 +114,14 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .czone.right{right:4px;justify-content:flex-end;}
 .carrow{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.93);border:1.5px solid var(--green3);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--green);box-shadow:0 2px 10px rgba(78,154,106,.2);transition:all .15s;pointer-events:none;}
 .czone:hover .carrow{background:var(--green);color:#fff;box-shadow:0 3px 14px rgba(78,154,106,.4);}
-/* Canvas — margin auto centers; when wider than viewport, scroll works correctly */
+/* Canvas */
 .cwrap{display:table;margin:0 auto;}
 .cwrap.dbl{display:flex;flex-direction:row;justify-content:center;gap:6px;align-items:flex-start;margin:0 auto;width:max-content;}
 .cwrap.dbl canvas{max-width:none;}
 .pdiv{width:2px;background:var(--border2);align-self:stretch;flex-shrink:0;}
 canvas{display:block;box-shadow:0 3px 18px rgba(0,0,0,.12);border-radius:1px;}
 #epub-area{width:100%;max-width:760px;}
-#txt-area{display:none;width:100%;max-width:700px;}
+#txt-area{display:none;width:100%;max-width:700px;margin:0 auto;}
 /* Settings panel */
 .spanel{position:absolute;top:0;right:0;height:100%;width:258px;background:var(--surface);border-left:1px solid var(--border2);padding:16px 14px;display:flex;flex-direction:column;gap:16px;transform:translateX(258px);transition:transform .28s ease;z-index:10;overflow-y:auto;}
 .spanel.show{transform:translateX(0);}
@@ -255,7 +255,6 @@ input[type=file]{display:none;}
     </div>
     <!-- Reading area -->
     <div class="rarea theme-light" id="rarea">
-      <!-- Click zones sit on rarea, not inside scroll content -->
       <div class="czone left" id="cz-left"><div class="carrow">‹</div></div>
       <div class="czone right" id="cz-right"><div class="carrow">›</div></div>
       <div class="rcontent" id="rcontent">
@@ -360,11 +359,60 @@ input[type=file]{display:none;}
 <script src="https://cdn.jsdelivr.net/npm/epubjs@0.3.93/dist/epub.min.js"></script>
 <script>
 'use strict';
-// ── PDF.js worker (CDN; falls back to fake worker in sandbox — harmless) ──
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+// ── PDF.js worker ──
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 const CMAP_URL  = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/';
 const CMAP_PACKED = true;
+
+// ── INDEXED DB & LOCAL STORAGE FOR PERSISTENCE ──
+const DB_NAME = 'RafimDB';
+const idb = {
+  db: null,
+  async init() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = e => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('books')) {
+          db.createObjectStore('books', { keyPath: 'id' });
+        }
+      };
+      req.onsuccess = e => { this.db = e.target.result; resolve(); };
+      req.onerror = () => reject('DB Error');
+    });
+  },
+  async getBooks() {
+    return new Promise(resolve => {
+      if(!this.db) return resolve([]);
+      const tx = this.db.transaction('books', 'readonly');
+      const req = tx.objectStore('books').getAll();
+      req.onsuccess = e => resolve(e.target.result || []);
+      req.onerror = () => resolve([]);
+    });
+  },
+  async saveBook(book) {
+    if(book.type === 'demo') return; // Demo kitapları DB'ye yazma
+    return new Promise(resolve => {
+      if(!this.db) return resolve();
+      const tx = this.db.transaction('books', 'readwrite');
+      tx.objectStore('books').put(book);
+      tx.oncomplete = resolve;
+    });
+  },
+  async deleteBook(id) {
+    return new Promise(resolve => {
+      if(!this.db) return resolve();
+      const tx = this.db.transaction('books', 'readwrite');
+      tx.objectStore('books').delete(id);
+      tx.oncomplete = resolve;
+    });
+  }
+};
+
+function saveLocal() {
+  localStorage.setItem('rafim_cfg', JSON.stringify(ST.cfg));
+  localStorage.setItem('rafim_bmarks', JSON.stringify(ST.bmarks));
+}
 
 // ── STATE ──
 const ST = {
@@ -456,7 +504,12 @@ async function addFile(file){
   if(!['pdf','epub','txt'].includes(ext)){toast('Desteklenmeyen format: .'+ext);return;}
   const color=PALETTE[ST.books.length%PALETTE.length];
   const book={id:'b'+Date.now()+Math.random().toString(36).slice(2),title:file.name.replace(/\.[^.]+$/,''),author:'',color,progress:0,type:ext,file,coverUrl:null};
-  ST.books.push(book);renderLib();toast(`"${book.title}" eklendi ✓`);
+  ST.books.push(book);
+  renderLib();
+  toast(`"${book.title}" eklendi ✓`);
+  
+  await idb.saveBook(book); // DB ye kaydet
+  
   if(ext==='epub') extractEpubMeta(book);
   else if(ext==='pdf') extractPdfCover(book);
 }
@@ -472,7 +525,9 @@ async function extractEpubMeta(book){
     if(meta?.title&&meta.title.length>1)book.title=meta.title;
     if(meta?.creator)book.author=meta.creator;
     if(coverUrl)book.coverUrl=coverUrl;
-    eb.destroy();renderLib();
+    eb.destroy();
+    renderLib();
+    idb.saveBook(book); // Kapak bulunduğunda güncelle
   }catch(e){/* silent */}
 }
 async function extractPdfCover(book){
@@ -484,7 +539,9 @@ async function extractPdfCover(book){
     const cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;
     await pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
     book.coverUrl=cv.toDataURL('image/jpeg',.82);
-    pdf.destroy();renderLib();
+    pdf.destroy();
+    renderLib();
+    idb.saveBook(book); // Kapak bulunduğunda güncelle
   }catch(e){/* silent */}
 }
 
@@ -494,27 +551,37 @@ function openBook(book){
     showModal('Örnek Kitap',`"<strong>${esc(book.title)}</strong>" bir demo göstergesidir.<br><br>Gerçek kitap eklemek için <strong>PDF, EPUB veya TXT</strong> dosyası yükleyin.`,[{label:'Tamam',pri:true,fn:closeModal}]);
     return;
   }
-  ST.cur=book;ST.page=1;ST.pages=1;ST.t0=Date.now();ST.pagesRead=0;ST.toc=[];ST.srResults=[];
+  ST.cur=book;
+  // Eğer kitabın daha önce okunmuş sayfasına dönülecekse
+  ST.page = Math.max(1, Math.round((book.progress / 100) * ST.pages) || 1); 
+  ST.pages=1;ST.t0=Date.now();ST.pagesRead=0;ST.toc=[];ST.srResults=[];
+  
   document.getElementById('rtitle').textContent=book.title;
   document.getElementById('lib').classList.add('hide');
   document.getElementById('rdr').classList.add('show');
-  // Reset
+  
   document.getElementById('cwrap').innerHTML='';
   document.getElementById('cwrap').style.display='';
   document.getElementById('epub-area').innerHTML='';
   document.getElementById('epub-area').style.display='none';
   document.getElementById('txt-area').textContent='';
   document.getElementById('txt-area').style.display='none';
+  
   applyTheme(ST.cfg.theme);
   document.getElementById('zoom-sg').style.display=book.type==='pdf'?'':'none';
   document.getElementById('layout-sg').style.display=book.type==='pdf'?'':'none';
+  
   if(book.type==='pdf') loadPDF(book);
   else if(book.type==='epub') loadEPUB(book);
   else loadTXT(book);
 }
 
 function closeReader(){
-  if(ST.cur){ST.cur.progress=Math.min(100,Math.round((ST.page/Math.max(1,ST.pages))*100));renderLib();}
+  if(ST.cur){
+    ST.cur.progress = Math.min(100, Math.round((ST.page/Math.max(1,ST.pages))*100));
+    idb.saveBook(ST.cur); // İlerlemeyi kaydet
+    renderLib();
+  }
   if(ST.epubBook){try{ST.epubBook.destroy();}catch(e){}ST.epubBook=null;ST.epubRend=null;}
   ST.pdfDoc=null;ST.cur=null;
   document.getElementById('rdr').classList.remove('show');
@@ -528,10 +595,12 @@ async function loadPDF(book){
   try{
     const buf=await book.file.arrayBuffer();
     ST.pdfDoc=await pdfjsLib.getDocument({data:new Uint8Array(buf),cMapUrl:CMAP_URL,cMapPacked:CMAP_PACKED}).promise;
-    ST.pages=ST.pdfDoc.numPages;ST.page=1;
+    ST.pages=ST.pdfDoc.numPages;
+    // Eğer ilerleme varsa kaldığı sayfayı bul
+    ST.page = Math.max(1, Math.round((book.progress / 100) * ST.pages) || 1);
     const ol=await ST.pdfDoc.getOutline().catch(()=>null);
     ST.toc=ol?flatOl(ol):[];
-    await renderPDF(1);updNav();
+    await renderPDF(ST.page);updNav();
     if(ST.sideOpen)renderTab();
   }catch(e){toast('PDF yüklenemedi: '+(e.message||e));closeReader();}
   finally{showLoad(false);}
@@ -585,7 +654,11 @@ async function loadEPUB(book){
     const blobUrl=URL.createObjectURL(book.file);
     ST.epubBook=ePub(blobUrl);
     ST.epubRend=ST.epubBook.renderTo(ea,{width:W,height:H,spread:'none',flow:'paginated'});
-    await ST.epubRend.display();
+    
+    // Eğer ilerleme varsa oraya git
+    let targetCfi = undefined;
+    
+    await ST.epubRend.display(targetCfi);
     ST.epubBook.loaded.metadata.then(m=>{
       if(m?.title&&m.title.length>1){book.title=m.title;document.getElementById('rtitle').textContent=m.title;}
       if(m?.creator)book.author=m.creator;
@@ -601,7 +674,15 @@ async function loadEPUB(book){
         if(idx>=0){ST.page=idx+1;updNav();updBmBtn();}
       }
     });
-    ST.epubBook.locations.generate(1200).then(()=>{ST.pages=ST.epubBook.locations.total||100;updNav();}).catch(()=>{ST.pages=100;updNav();});
+    ST.epubBook.locations.generate(1200).then(()=>{
+      ST.pages=ST.epubBook.locations.total||100;
+      if (book.progress > 0 && book.progress <= 100) {
+        let p = Math.max(1, Math.round((book.progress / 100) * ST.pages));
+        let cfi = ST.epubBook.locations.cfiFromPercentage(book.progress/100);
+        if(cfi) ST.epubRend.display(cfi);
+      }
+      updNav();
+    }).catch(()=>{ST.pages=100;updNav();});
     ST.pages=100;ST.page=1;updNav();
   }catch(e){toast('EPUB yüklenemedi: '+(e.message||e));closeReader();}
   finally{showLoad(false);}
@@ -616,9 +697,10 @@ async function loadTXT(book){
     const text=await book.file.text();
     book._pages=[];for(let i=0;i<text.length;i+=3000)book._pages.push(text.slice(i,i+3000));
     if(!book._pages.length)book._pages=['(Boş dosya)'];
-    ST.pages=book._pages.length;ST.page=1;
+    ST.pages=book._pages.length;
+    ST.page = Math.max(1, Math.round((book.progress / 100) * ST.pages) || 1);
     ST.toc=book._pages.map((_,i)=>({title:'Bölüm '+(i+1),depth:0,page:i+1}));
-    renderTXT(1);updNav();if(ST.sideOpen)renderTab();
+    renderTXT(ST.page);updNav();if(ST.sideOpen)renderTab();
   }catch(e){toast('Dosya okunamadı.');closeReader();}
   finally{showLoad(false);}
 }
@@ -627,7 +709,7 @@ function renderTXT(n){
   const ta=document.getElementById('txt-area');
   const{theme,fs,ff,lh}=ST.cfg;
   const clr=theme==='dark'?'#D0E8C0':theme==='sepia'?'#5A3A18':'#2A3828';
-  ta.style.cssText=`display:block;width:100%;max-width:700px;font-family:${ff};font-size:${fs}px;line-height:${lh};color:${clr};white-space:pre-wrap;padding:0 8px;`;
+  ta.style.cssText=`display:block;width:100%;max-width:700px;margin:0 auto;font-family:${ff};font-size:${fs}px;line-height:${lh};color:${clr};white-space:pre-wrap;padding:0 8px;`;
   ta.textContent=bk._pages[n-1]||'';
   document.getElementById('rcontent').scrollTop=0;
 }
@@ -667,6 +749,7 @@ function toggleBm(){
   const idx=ST.bmarks[id].findIndex(b=>b.page===ST.page);
   if(idx>=0){ST.bmarks[id].splice(idx,1);toast('İşaret kaldırıldı');}
   else{ST.bmarks[id].push({page:ST.page,date:new Date().toLocaleDateString('tr-TR')});toast('Sayfa işaretlendi 🔖');}
+  saveLocal();
   updBmBtn();if(ST.sideOpen&&ST.activeTab==='bm')renderTab();
 }
 function updBmBtn(){
@@ -674,7 +757,12 @@ function updBmBtn(){
   document.getElementById('btn-bm').classList.toggle('on',!!(id&&(ST.bmarks[id]||[]).some(b=>b.page===ST.page)));
 }
 async function jumpBm(page){ST.page=page;await goPage();updNav();updBmBtn();}
-function delBm(id,page,e){e.stopPropagation();ST.bmarks[id]=(ST.bmarks[id]||[]).filter(b=>b.page!==page);updBmBtn();renderTab();}
+function delBm(id,page,e){
+  e.stopPropagation();
+  ST.bmarks[id]=(ST.bmarks[id]||[]).filter(b=>b.page!==page);
+  saveLocal();
+  updBmBtn();renderTab();
+}
 
 // ── SIDEBAR ──
 function toggleSide(){if(ST.sideOpen)closeSide();else openSide();}
@@ -787,17 +875,19 @@ document.getElementById('ptrack').addEventListener('click',e=>{
 
 // Theme buttons
 document.querySelectorAll('[data-theme]').forEach(b=>b.addEventListener('click',()=>{
-  ST.cfg.theme=b.dataset.theme;applyTheme(ST.cfg.theme);
+  ST.cfg.theme=b.dataset.theme;applyTheme(ST.cfg.theme);saveLocal();
 }));
 
 // Font size
 document.getElementById('fz-dn').addEventListener('click',()=>{
   ST.cfg.fs=Math.max(12,ST.cfg.fs-2);document.getElementById('fz-val').textContent=ST.cfg.fs;
   if(ST.cur?.type==='txt')renderTXT(ST.page);
+  saveLocal();
 });
 document.getElementById('fz-up').addEventListener('click',()=>{
   ST.cfg.fs=Math.min(34,ST.cfg.fs+2);document.getElementById('fz-val').textContent=ST.cfg.fs;
   if(ST.cur?.type==='txt')renderTXT(ST.page);
+  saveLocal();
 });
 
 // Zoom
@@ -805,15 +895,18 @@ document.getElementById('zm-dn').addEventListener('click',()=>{
   ST.cfg.zoom=Math.max(.3,+(ST.cfg.zoom-.1).toFixed(2));
   document.getElementById('zm-pct').textContent=Math.round(ST.cfg.zoom*100)+'%';
   if(ST.cur?.type==='pdf')renderPDF(ST.page);
+  saveLocal();
 });
 document.getElementById('zm-up').addEventListener('click',()=>{
   ST.cfg.zoom=Math.min(3,+(ST.cfg.zoom+.1).toFixed(2));
   document.getElementById('zm-pct').textContent=Math.round(ST.cfg.zoom*100)+'%';
   if(ST.cur?.type==='pdf')renderPDF(ST.page);
+  saveLocal();
 });
 document.getElementById('zm-pct').addEventListener('click',()=>{
   ST.cfg.zoom=1.0;document.getElementById('zm-pct').textContent='100%';
   if(ST.cur?.type==='pdf')renderPDF(ST.page);
+  saveLocal();
 });
 
 // Layout
@@ -821,6 +914,7 @@ document.querySelectorAll('[data-layout]').forEach(b=>b.addEventListener('click'
   ST.cfg.layout=b.dataset.layout;
   document.querySelectorAll('[data-layout]').forEach(x=>x.classList.toggle('on',x.dataset.layout===ST.cfg.layout));
   if(ST.cur?.type==='pdf')renderPDF(ST.page);
+  saveLocal();
 }));
 
 // Font family
@@ -828,6 +922,7 @@ document.querySelectorAll('[data-ff]').forEach(b=>b.addEventListener('click',()=
   ST.cfg.ff=b.dataset.ff;
   document.querySelectorAll('[data-ff]').forEach(x=>x.classList.toggle('on',x===b));
   if(ST.cur?.type==='txt')renderTXT(ST.page);
+  saveLocal();
 }));
 
 // Line height
@@ -835,6 +930,7 @@ document.querySelectorAll('[data-lh]').forEach(b=>b.addEventListener('click',()=
   ST.cfg.lh=parseFloat(b.dataset.lh);
   document.querySelectorAll('[data-lh]').forEach(x=>x.classList.toggle('on',x===b));
   if(ST.cur?.type==='txt')renderTXT(ST.page);
+  saveLocal();
 }));
 
 // Sidebar tabs
@@ -851,7 +947,16 @@ document.getElementById('ctx-rename').addEventListener('click',()=>{
   const bk=ST.ctxBook;if(!bk)return;
   showModal('Adını Değiştir',`<input id="ren" class="minput" value="${esc(bk.title)}">`,[
     {label:'İptal',fn:closeModal},
-    {label:'Kaydet',pri:true,fn:()=>{const v=document.getElementById('ren').value.trim();if(v){bk.title=v;renderLib();toast('İsim güncellendi ✓');}closeModal();}}
+    {label:'Kaydet',pri:true,fn:()=>{
+      const v=document.getElementById('ren').value.trim();
+      if(v){
+        bk.title=v;
+        renderLib();
+        toast('İsim güncellendi ✓');
+        idb.saveBook(bk); // isim değişikliğini kaydet
+      }
+      closeModal();
+    }}
   ]);
   setTimeout(()=>document.getElementById('ren')?.focus(),80);
 });
@@ -859,7 +964,13 @@ document.getElementById('ctx-remove').addEventListener('click',()=>{
   const bk=ST.ctxBook;if(!bk)return;
   showModal('Kitabı Kaldır',`"<strong>${esc(bk.title)}</strong>" kütüphaneden kaldırılsın mı?`,[
     {label:'Hayır',fn:closeModal},
-    {label:'Kaldır',pri:true,fn:()=>{ST.books=ST.books.filter(b=>b.id!==bk.id);renderLib();toast('Kaldırıldı');closeModal();}}
+    {label:'Kaldır',pri:true,fn:()=>{
+      ST.books=ST.books.filter(b=>b.id!==bk.id);
+      idb.deleteBook(bk.id); // veritabanından kaldır
+      renderLib();
+      toast('Kaldırıldı');
+      closeModal();
+    }}
   ]);
 });
 
@@ -881,8 +992,42 @@ function toggleFS(){
   else document.exitFullscreen?.();
 }
 
-// ── INIT ──
-renderLib();
+function syncSettingsUI() {
+  document.getElementById('fz-val').textContent = ST.cfg.fs;
+  document.getElementById('zm-pct').textContent = Math.round(ST.cfg.zoom * 100) + '%';
+  document.querySelectorAll('[data-layout]').forEach(x => x.classList.toggle('on', x.dataset.layout === ST.cfg.layout));
+  document.querySelectorAll('[data-ff]').forEach(x => x.classList.toggle('on', x.dataset.ff === ST.cfg.ff));
+  document.querySelectorAll('[data-lh]').forEach(x => x.classList.toggle('on', parseFloat(x.dataset.lh) === ST.cfg.lh));
+  document.querySelectorAll('[data-theme]').forEach(b => b.classList.toggle('on', b.dataset.theme === ST.cfg.theme));
+}
+
+// ── INIT BOOT ──
+async function boot() {
+  // Config & Bookmark yükle
+  try {
+    const savedCfg = localStorage.getItem('rafim_cfg');
+    if(savedCfg) ST.cfg = {...ST.cfg, ...JSON.parse(savedCfg)};
+    const savedBm = localStorage.getItem('rafim_bmarks');
+    if(savedBm) ST.bmarks = JSON.parse(savedBm);
+  } catch(e) {}
+  
+  syncSettingsUI();
+
+  // Veritabanından kitapları çek
+  try {
+    await idb.init();
+    const savedBooks = await idb.getBooks();
+    if (savedBooks && savedBooks.length > 0) {
+      ST.books.push(...savedBooks);
+    }
+  } catch(e) {
+    console.warn('Veritabanı başlatılamadı', e);
+  }
+  
+  renderLib();
+}
+
+boot();
 </script>
 </body>
 </html>
