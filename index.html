@@ -355,8 +355,11 @@ input[type=file]{display:none;}
 <div class="toast" id="toast"></div>
 <input type="file" id="fi" accept=".pdf,.epub,.txt" multiple>
 
+<!-- KÜTÜPHANELER -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script> <!-- EKLENEN JSZIP KÜTÜPHANESİ -->
 <script src="https://cdn.jsdelivr.net/npm/epubjs@0.3.93/dist/epub.min.js"></script>
+
 <script>
 'use strict';
 // ── PDF.js worker ──
@@ -391,7 +394,7 @@ const idb = {
     });
   },
   async saveBook(book) {
-    if(book.type === 'demo') return; // Demo kitapları DB'ye yazma
+    if(book.type === 'demo') return;
     return new Promise(resolve => {
       if(!this.db) return resolve();
       const tx = this.db.transaction('books', 'readwrite');
@@ -508,7 +511,7 @@ async function addFile(file){
   renderLib();
   toast(`"${book.title}" eklendi ✓`);
   
-  await idb.saveBook(book); // DB ye kaydet
+  await idb.saveBook(book); 
   
   if(ext==='epub') extractEpubMeta(book);
   else if(ext==='pdf') extractPdfCover(book);
@@ -527,7 +530,7 @@ async function extractEpubMeta(book){
     if(coverUrl)book.coverUrl=coverUrl;
     eb.destroy();
     renderLib();
-    idb.saveBook(book); // Kapak bulunduğunda güncelle
+    idb.saveBook(book);
   }catch(e){/* silent */}
 }
 async function extractPdfCover(book){
@@ -541,7 +544,7 @@ async function extractPdfCover(book){
     book.coverUrl=cv.toDataURL('image/jpeg',.82);
     pdf.destroy();
     renderLib();
-    idb.saveBook(book); // Kapak bulunduğunda güncelle
+    idb.saveBook(book);
   }catch(e){/* silent */}
 }
 
@@ -552,7 +555,6 @@ function openBook(book){
     return;
   }
   ST.cur=book;
-  // Eğer kitabın daha önce okunmuş sayfasına dönülecekse
   ST.page = Math.max(1, Math.round((book.progress / 100) * ST.pages) || 1); 
   ST.pages=1;ST.t0=Date.now();ST.pagesRead=0;ST.toc=[];ST.srResults=[];
   
@@ -579,7 +581,7 @@ function openBook(book){
 function closeReader(){
   if(ST.cur){
     ST.cur.progress = Math.min(100, Math.round((ST.page/Math.max(1,ST.pages))*100));
-    idb.saveBook(ST.cur); // İlerlemeyi kaydet
+    idb.saveBook(ST.cur);
     renderLib();
   }
   if(ST.epubBook){try{ST.epubBook.destroy();}catch(e){}ST.epubBook=null;ST.epubRend=null;}
@@ -596,7 +598,6 @@ async function loadPDF(book){
     const buf=await book.file.arrayBuffer();
     ST.pdfDoc=await pdfjsLib.getDocument({data:new Uint8Array(buf),cMapUrl:CMAP_URL,cMapPacked:CMAP_PACKED}).promise;
     ST.pages=ST.pdfDoc.numPages;
-    // Eğer ilerleme varsa kaldığı sayfayı bul
     ST.page = Math.max(1, Math.round((book.progress / 100) * ST.pages) || 1);
     const ol=await ST.pdfDoc.getOutline().catch(()=>null);
     ST.toc=ol?flatOl(ol):[];
@@ -644,48 +645,59 @@ function getPdfScale(dbl){
 async function loadEPUB(book){
   showLoad(true);
   try{
+    // Sayfa tam oturmadan sıfır boyut hesaplamaması için minik bekleme
+    await new Promise(r => setTimeout(r, 50)); 
+    
     document.getElementById('cwrap').style.display='none';
     const ea=document.getElementById('epub-area');
     const rc=document.getElementById('rcontent');
-    const W=Math.min(rc.clientWidth-32,760);
-    const H=Math.max(window.innerHeight-180,500);
+    
+    // ePub motoru için güvenli sınır boyutları belirlendi
+    const W = Math.max(300, Math.min(rc.clientWidth - 32, 760));
+    const H = Math.max(400, window.innerHeight - 180);
     ea.style.cssText=`display:block;width:${W}px;height:${H}px;margin:0 auto;`;
     ea.innerHTML='';
-    const blobUrl=URL.createObjectURL(book.file);
-    ST.epubBook=ePub(blobUrl);
-    ST.epubRend=ST.epubBook.renderTo(ea,{width:W,height:H,spread:'none',flow:'paginated'});
     
-    // Eğer ilerleme varsa oraya git
-    let targetCfi = undefined;
+    const buf = await book.file.arrayBuffer();
+    ST.epubBook = ePub(buf);
+    ST.epubRend = ST.epubBook.renderTo(ea, {width:W, height:H, spread:'none', flow:'paginated'});
     
-    await ST.epubRend.display(targetCfi);
+    await ST.epubRend.display();
+    
     ST.epubBook.loaded.metadata.then(m=>{
       if(m?.title&&m.title.length>1){book.title=m.title;document.getElementById('rtitle').textContent=m.title;}
       if(m?.creator)book.author=m.creator;
       renderLib();
     }).catch(()=>{});
+    
     ST.epubBook.loaded.navigation.then(nav=>{
       ST.toc=(nav?.toc||[]).flatMap(t=>[{title:t.label?.trim()||'—',href:t.href,depth:0},...(t.subitems||[]).map(s=>({title:s.label?.trim()||'—',href:s.href,depth:1}))]);
       if(ST.sideOpen)renderTab();
     }).catch(()=>{});
+    
     ST.epubRend.on('relocated',loc=>{
       if(ST.epubBook.locations?.total&&loc?.start?.cfi){
         const idx=ST.epubBook.locations.locationFromCfi(loc.start.cfi);
         if(idx>=0){ST.page=idx+1;updNav();updBmBtn();}
       }
     });
+    
     ST.epubBook.locations.generate(1200).then(()=>{
       ST.pages=ST.epubBook.locations.total||100;
       if (book.progress > 0 && book.progress <= 100) {
-        let p = Math.max(1, Math.round((book.progress / 100) * ST.pages));
         let cfi = ST.epubBook.locations.cfiFromPercentage(book.progress/100);
         if(cfi) ST.epubRend.display(cfi);
       }
       updNav();
     }).catch(()=>{ST.pages=100;updNav();});
+    
     ST.pages=100;ST.page=1;updNav();
-  }catch(e){toast('EPUB yüklenemedi: '+(e.message||e));closeReader();}
-  finally{showLoad(false);}
+  }catch(e){
+    toast('EPUB yüklenemedi: '+(e.message||e));
+    closeReader();
+  }finally{
+    showLoad(false);
+  }
 }
 
 // ── TXT ──
