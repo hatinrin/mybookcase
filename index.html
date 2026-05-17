@@ -1004,7 +1004,6 @@ async function loadEPUB(book){
     ST.epubBook = ePub(buf);
     ST.epubRend = ST.epubBook.renderTo(ea, {width:W, height:H, spread:'none', flow:'paginated'});
     
-    // Gerçek EPUB Gece/Gündüz Temalandırması
     const baseRules = { "background": "transparent !important" };
     ST.epubRend.themes.register("light", { "body": baseRules, "*": { "color": "#3A2A18 !important" } });
     ST.epubRend.themes.register("sepia", { "body": baseRules, "*": { "color": "#5A3A18 !important" } });
@@ -1115,7 +1114,7 @@ function delBm(id,page,e){
   saveLocal(); updBmBtn(); renderTab();
 }
 
-// ── SIDEBAR ──
+// ── SIDEBAR & TOC DÜZELTMESİ ──
 function toggleSide(){if(ST.sideOpen)closeSide();else openSide();}
 function openSide(){ST.sideOpen=true;document.getElementById('rside').classList.add('show');document.getElementById('btn-side').classList.add('on');renderTab();}
 function closeSide(){ST.sideOpen=false;document.getElementById('rside').classList.remove('show');document.getElementById('btn-side').classList.remove('on');}
@@ -1146,12 +1145,37 @@ function renderTab(){
     });
   }
 }
+
+// HATA ÇÖZÜMÜ: PDF Dizini (Array) Hedeflerini ve Otomatik Kapanmayı İçerir
 async function goTOC(i){
   const it=ST.toc[i];if(!it)return;
   if(ST.cur?.type==='pdf'&&it.dest){
-    try{const dest=await ST.pdfDoc.getDestination(it.dest);if(dest){const ref=await ST.pdfDoc.getPageIndex(dest[0]);ST.page=ref+1;await renderPDF(ST.page);updNav();}}catch(e){}
-  }else if(ST.cur?.type==='epub'&&ST.epubRend)ST.epubRend.display(it.href);
-  else if(ST.cur?.type==='txt'&&it.page){ST.page=it.page;renderTXT(ST.page);updNav();}
+    try{
+      let dest = it.dest;
+      if(typeof dest === 'string') dest = await ST.pdfDoc.getDestination(dest);
+      if(Array.isArray(dest)){
+        let pIdx = -1;
+        if(typeof dest[0] === 'object' && dest[0] !== null) pIdx = await ST.pdfDoc.getPageIndex(dest[0]);
+        else if(Number.isInteger(dest[0])) pIdx = dest[0];
+        if(pIdx >= 0){
+          ST.page = pIdx + 1;
+          await goPage();
+          updNav();
+          updBmBtn();
+          if(window.innerWidth < 900) closeSide();
+        }
+      }
+    }catch(e){console.warn('TOC nav error', e);}
+  }else if(ST.cur?.type==='epub'&&ST.epubRend){
+    ST.epubRend.display(it.href);
+    if(window.innerWidth < 900) closeSide();
+  }else if(ST.cur?.type==='txt'&&it.page){
+    ST.page=it.page;
+    await goPage();
+    updNav();
+    updBmBtn();
+    if(window.innerWidth < 900) closeSide();
+  }
 }
 
 // ── SEARCH ──
