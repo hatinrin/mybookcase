@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Like My Book Case</title>
+<title>Like My Bookcase</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
@@ -29,7 +29,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .hdr-left{display:flex;align-items:center;gap:12px;}
 .hdr-right{display:flex;align-items:center;gap:10px;}
 .logo{font-size:28px;}
-.app-name{font-size:22px;color:var(--green);font-weight:800;letter-spacing:1px;text-transform:uppercase;transition:color .4s;}
+.app-name{font-size:21px;color:var(--green);font-weight:800;letter-spacing:0.5px;transition:color .4s;}
 .app-sub{font-size:11px;color:var(--accent1);letter-spacing:1.5px;font-weight:500;margin-top:1px;transition:color .4s;}
 .add-btn{background:linear-gradient(135deg,var(--accent1),var(--accent2));color:#fff;border:none;padding:9px 20px;border-radius:20px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 3px 10px rgba(0,0,0,.15);transition:all .4s;}
 .add-btn:hover{transform:translateY(-2px);box-shadow:0 5px 16px rgba(0,0,0,.25);}
@@ -39,7 +39,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 /* ── COLLECTIONS BAR ── */
 .col-bar{display:flex;gap:8px;padding:16px 36px 0 36px;background:var(--surface);border-bottom:3px solid var(--green3);align-items:flex-end;overflow-x:auto;transition:border-color .4s;}
 .col-bar::-webkit-scrollbar{display:none;}
-.col-tab{padding:10px 18px;border-radius:12px 12px 0 0;background:var(--bg);border:1px solid var(--border);border-bottom:none;font-size:11.5px;font-weight:600;color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .3s;font-family:inherit;margin-bottom:0;}
+.col-tab{padding:10px 18px;border-radius:12px 12px 0 0;background:var(--bg);border:1px solid var(--border);border-bottom:none;font-size:11.5px;font-weight:600;color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .3s;font-family:inherit;margin-bottom:0; -webkit-touch-callout:none; user-select:none;}
 .col-tab:hover{background:var(--green4);}
 .col-tab.on{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 -3px 10px rgba(0,0,0,.08);padding-bottom:12px;margin-bottom:-2px;}
 .col-tab.drag-over{transform:scale(1.02);border-color:var(--accent1);background:var(--surface2);color:var(--accent1);}
@@ -53,11 +53,11 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .books{display:flex;gap:12px;align-items:flex-end;padding-bottom:20px;flex-wrap:wrap;min-height:195px;}
 
 /* Book */
-.bk{cursor:pointer;transition:transform .22s, opacity .2s;position:relative;flex-shrink:0;}
+.bk{cursor:pointer;transition:transform .22s, opacity .2s;position:relative;flex-shrink:0; -webkit-touch-callout:none; user-select:none;}
 .bk:hover{transform:translateY(-12px);}
 .bk.drag-over{opacity:0.6;transform:scale(1.02);}
 .bk-cover{width:110px;height:160px;border-radius:2px 6px 6px 2px;position:relative;overflow:hidden;box-shadow:-5px 5px 12px rgba(0,0,0,.25),inset -3px 0 6px rgba(0,0,0,.15);}
-.bk-cover img{width:100%;height:100%;object-fit:cover;display:block;}
+.bk-cover img{width:100%;height:100%;object-fit:cover;display:block; pointer-events:none;} /* iOS popup block */
 .bk-fallback{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:12px 10px;}
 .bk-spine{position:absolute;left:0;top:0;bottom:0;width:11px;background:rgba(0,0,0,.25);border-right:1px solid rgba(255,255,255,.08);}
 .bk-ttl{font-size:11px;font-weight:700;color:rgba(255,255,255,.96);text-align:center;margin-left:11px;line-height:1.3;text-shadow:0 1px 4px rgba(0,0,0,.5);}
@@ -272,12 +272,11 @@ input[type=file]{display:none;}
     <div class="hdr-left">
       <div class="logo">🌸</div>
       <div>
-        <div class="app-name" data-i18n="app_title">LIKE MY BOOK CASE</div>
+        <div class="app-name" data-i18n="app_title">Like My Bookcase</div>
         <div class="app-sub" data-i18n="app_sub">Dijital Kitaplığın</div>
       </div>
     </div>
     <div class="hdr-right">
-      <!-- Tıklama işlemi artık doğrudan dosya açmak yerine modala yönlendiriyor -->
       <button class="add-btn" onclick="showAddModal()"><span data-i18n="add_btn">＋ Kitap Ekle</span></button>
       <button class="app-set-btn" onclick="openAppSet()" title="Ayarlar">⚙️</button>
     </div>
@@ -478,32 +477,37 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 const CMAP_URL  = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/';
 const CMAP_PACKED = true;
 
-// ── APP COLORS ──
+// ── APP COLORS (15 Temalı Kapsamlı Palet) ──
 const APP_COLORS = [
-  {id:'grn', n:'Doğa (Yeşil)',  c1:'#4E9A6A', c2:'#7BBF90', c3:'#C2E5CE', c4:'#EAF7EE', bg:'#F4F9F1', sh:'#D0E5C2', sht:'#A8C898', she:'#88A878', bd:'#CAE0BE', bd2:'#DDEEDD', ac1:'#E05C85', ac2:'#C0406A'},
+  {id:'grn', n:'Matcha (Yeşil)',  c1:'#4E9A6A', c2:'#7BBF90', c3:'#C2E5CE', c4:'#EAF7EE', bg:'#F4F9F1', sh:'#D0E5C2', sht:'#A8C898', she:'#88A878', bd:'#CAE0BE', bd2:'#DDEEDD', ac1:'#E05C85', ac2:'#C0406A'},
   {id:'blu', n:'Okyanus (Mavi)',c1:'#3B82F6', c2:'#60A5FA', c3:'#BFDBFE', c4:'#EFF6FF', bg:'#F0F8FF', sh:'#DBEAFE', sht:'#93C5FD', she:'#60A5FA', bd:'#BFDBFE', bd2:'#DBEAFE', ac1:'#F59E0B', ac2:'#D97706'},
-  {id:'pur', n:'Lila (Mor)',    c1:'#8B5CF6', c2:'#A78BFA', c3:'#DDD6FE', c4:'#F5F3FF', bg:'#FAF5FF', sh:'#EDE9FE', sht:'#C4B5FD', she:'#8B5CF6', bd:'#DDD6FE', bd2:'#EDE9FE', ac1:'#10B981', ac2:'#059669'},
-  {id:'pnk', n:'Kiraz (Pembe)', c1:'#EC4899', c2:'#F472B6', c3:'#FBCFE8', c4:'#FDF2F8', bg:'#FFF1F2', sh:'#FCE7F3', sht:'#F9A8D4', she:'#EC4899', bd:'#FBCFE8', bd2:'#FCE7F3', ac1:'#8B5CF6', ac2:'#6D28D9'},
+  {id:'pur', n:'Lavanta (Mor)', c1:'#8B5CF6', c2:'#A78BFA', c3:'#DDD6FE', c4:'#F5F3FF', bg:'#FAF5FF', sh:'#EDE9FE', sht:'#C4B5FD', she:'#8B5CF6', bd:'#DDD6FE', bd2:'#EDE9FE', ac1:'#10B981', ac2:'#059669'},
+  {id:'pnk', n:'Sakura (Pembe)',c1:'#EC4899', c2:'#F472B6', c3:'#FBCFE8', c4:'#FDF2F8', bg:'#FFF1F2', sh:'#FCE7F3', sht:'#F9A8D4', she:'#EC4899', bd:'#FBCFE8', bd2:'#FCE7F3', ac1:'#8B5CF6', ac2:'#6D28D9'},
   {id:'org', n:'Günbatımı',     c1:'#F97316', c2:'#FB923C', c3:'#FED7AA', c4:'#FFF7ED', bg:'#FFF7ED', sh:'#FFEDD5', sht:'#FDBA74', she:'#F97316', bd:'#FED7AA', bd2:'#FFEDD5', ac1:'#EF4444', ac2:'#B91C1C'},
-  {id:'red', n:'Ateş (Kırmızı)',c1:'#EF4444', c2:'#F87171', c3:'#FECACA', c4:'#FEF2F2', bg:'#FEF2F2', sh:'#FEE2E2', sht:'#FCA5A5', she:'#EF4444', bd:'#FECACA', bd2:'#FEE2E2', ac1:'#F59E0B', ac2:'#B45309'},
-  {id:'tal', n:'Turkuaz',       c1:'#14B8A6', c2:'#2DD4BF', c3:'#99F6E4', c4:'#F0FDFA', bg:'#F0FDFA', sh:'#CCFBF1', sht:'#5EEAD4', she:'#14B8A6', bd:'#99F6E4', bd2:'#CCFBF1', ac1:'#F43F5E', ac2:'#BE123C'},
+  {id:'red', n:'Yakut (Kırmızı)',c1:'#EF4444', c2:'#F87171', c3:'#FECACA', c4:'#FEF2F2', bg:'#FEF2F2', sh:'#FEE2E2', sht:'#FCA5A5', she:'#EF4444', bd:'#FECACA', bd2:'#FEE2E2', ac1:'#F59E0B', ac2:'#B45309'},
+  {id:'tal', n:'Nane (Turkuaz)',c1:'#14B8A6', c2:'#2DD4BF', c3:'#99F6E4', c4:'#F0FDFA', bg:'#F0FDFA', sh:'#CCFBF1', sht:'#5EEAD4', she:'#14B8A6', bd:'#99F6E4', bd2:'#CCFBF1', ac1:'#F43F5E', ac2:'#BE123C'},
   {id:'ind', n:'Gece (İndigo)', c1:'#6366F1', c2:'#818CF8', c3:'#C7D2FE', c4:'#EEF2FF', bg:'#EEF2FF', sh:'#E0E7FF', sht:'#A5B4FC', she:'#6366F1', bd:'#C7D2FE', bd2:'#E0E7FF', ac1:'#EC4899', ac2:'#BE185D'},
   {id:'brw', n:'Ahşap (Kahve)', c1:'#8B4513', c2:'#A0522D', c3:'#D2B48C', c4:'#F5F5DC', bg:'#FEFCE8', sh:'#F5DEB3', sht:'#D2B48C', she:'#A0522D', bd:'#DEB887', bd2:'#F5DEB3', ac1:'#16A34A', ac2:'#047857'},
-  {id:'gry', n:'Minimal (Gri)', c1:'#64748B', c2:'#94A3B8', c3:'#CBD5E1', c4:'#F8FAFC', bg:'#F8FAFC', sh:'#E2E8F0', sht:'#94A3B8', she:'#64748B', bd:'#CBD5E1', bd2:'#E2E8F0', ac1:'#3B82F6', ac2:'#1D4ED8'}
+  {id:'gry', n:'Minimal (Gri)', c1:'#64748B', c2:'#94A3B8', c3:'#CBD5E1', c4:'#F8FAFC', bg:'#F8FAFC', sh:'#E2E8F0', sht:'#94A3B8', she:'#64748B', bd:'#CBD5E1', bd2:'#E2E8F0', ac1:'#3B82F6', ac2:'#1D4ED8'},
+  {id:'sun', n:'Ayçiçeği (Sarı)',c1:'#EAB308', c2:'#FBBF24', c3:'#FDE68A', c4:'#FEFCE8', bg:'#FEFCE8', sh:'#FEF08A', sht:'#FCD34D', she:'#EAB308', bd:'#FDE68A', bd2:'#FEF08A', ac1:'#EA580C', ac2:'#C2410C'},
+  {id:'for', n:'Orman (Haki)',  c1:'#059669', c2:'#10B981', c3:'#A7F3D0', c4:'#ECFDF5', bg:'#ECFDF5', sh:'#D1FAE5', sht:'#6EE7B7', she:'#059669', bd:'#A7F3D0', bd2:'#D1FAE5', ac1:'#D97706', ac2:'#B45309'},
+  {id:'ber', n:'Böğürtlen (Bordo)',c1:'#BE123C', c2:'#E11D48', c3:'#FECDD3', c4:'#FFF1F2', bg:'#FFF1F2', sh:'#FFE4E6', sht:'#FDA4AF', she:'#BE123C', bd:'#FECDD3', bd2:'#FFE4E6', ac1:'#4F46E5', ac2:'#4338CA'},
+  {id:'lat', n:'Latte (Bej)',   c1:'#D97706', c2:'#F59E0B', c3:'#FDE68A', c4:'#FFFBEB', bg:'#FFFBEB', sh:'#FEF3C7', sht:'#FDE047', she:'#D97706', bd:'#FDE68A', bd2:'#FEF3C7', ac1:'#059669', ac2:'#047857'},
+  {id:'obs', n:'Gece Yarısı',   c1:'#334155', c2:'#475569', c3:'#CBD5E1', c4:'#F1F5F9', bg:'#F1F5F9', sh:'#E2E8F0', sht:'#94A3B8', she:'#334155', bd:'#CBD5E1', bd2:'#E2E8F0', ac1:'#14B8A6', ac2:'#0F766E'}
 ];
 
 // ── I18N ──
 const I18N = {
-  tr: { app_title:"LIKE MY BOOK CASE", app_sub:"Dijital Kitaplığın", add_btn:"＋ Kitap Ekle", all_books:"📚 Tüm Kitaplar", new_list:"+ Yeni Liste", stat_tot:"Toplam", stat_done:"Bitti", stat_rd:"Okunuyor", stat_un:"Okunmadı", ok:"Tamam", can:"Vazgeç", save:"Kaydet", ctx_del:"Sil", ctx_rmv:"Kaldır", ctx_ren:"Adını Değiştir", ctx_mov:"Listeye Taşı", ctx_opn:"Kitabı Aç", set_app:"Uygulama Ayarları", set_lang:"Dil Seçimi", set_color:"Uygulama Teması", empT:"İçindekiler bulunamadı.", empB:"Henüz işaret yok.", src_plh:"Ara...", btn_lib:"← Kütüphane", tab_toc:"İçindekiler", tab_bm:"İşaretler", tab_srch:"Ara", read_set:"Okuma Ayarları", th_set:"Arka Plan", th_lgt:"☀️ Açık", th_sep:"🍵 Sepya", th_drk:"🌙 Koyu", fz_set:"Yazı Boyutu", zm_set:"Yakınlaştırma", ly_set:"Sayfa Düzeni", ly_s:"Tek", ly_d:"Çift", ff_set:"Yazı Tipi", lh_set:"Satır Aralığı", lh_n:"Dar", lh_m:"Normal", lh_w:"Geniş", st_set:"İstatistik", main_col:"Ana Kitaplığa Taşı", loading:"Yükleniyor...", drop_add:"Bırak ve ekle", srch_found:"bulundu", srch_not:"Bulunamadı", moved:"Taşındı ✓", added:"eklendi ✓", renamed:"Güncellendi ✓", removed:"Kaldırıldı", ai_set:"✨ AI Netleştirme (Beta)", add_desc:"PDF, EPUB veya TXT dosyası seçin.", sel_file:"Dosya Seç" },
-  en: { app_title:"LIKE MY BOOK CASE", app_sub:"Your Digital Library", add_btn:"＋ Add Book", all_books:"📚 All Books", new_list:"+ New List", stat_tot:"Total", stat_done:"Done", stat_rd:"Reading", stat_un:"Unread", ok:"OK", can:"Cancel", save:"Save", ctx_del:"Delete", ctx_rmv:"Remove", ctx_ren:"Rename", ctx_mov:"Move to List", ctx_opn:"Open Book", set_app:"App Settings", set_lang:"Language", set_color:"App Theme", empT:"No TOC found.", empB:"No bookmarks.", src_plh:"Search...", btn_lib:"← Library", tab_toc:"Contents", tab_bm:"Bookmarks", tab_srch:"Search", read_set:"Reading Settings", th_set:"Background", th_lgt:"☀️ Light", th_sep:"🍵 Sepia", th_drk:"🌙 Dark", fz_set:"Font Size", zm_set:"Zoom", ly_set:"Layout", ly_s:"Single", ly_d:"Double", ff_set:"Font Family", lh_set:"Line Height", lh_n:"Narrow", lh_m:"Normal", lh_w:"Wide", st_set:"Stats", main_col:"Main Library", loading:"Loading...", drop_add:"Drop to add", srch_found:"found", srch_not:"Not found", moved:"Moved ✓", added:"added ✓", renamed:"Updated ✓", removed:"Removed", ai_set:"✨ AI Sharpen (Beta)", add_desc:"Select a PDF, EPUB or TXT file.", sel_file:"Select File" },
-  ja: { app_title:"LIKE MY BOOK CASE", app_sub:"デジタルライブラリ", add_btn:"＋ 本を追加", all_books:"📚 すべての本", new_list:"+ 新しいリスト", stat_tot:"合計", stat_done:"完了", stat_rd:"読書中", stat_un:"未読", ok:"OK", can:"キャンセル", save:"保存", ctx_del:"削除", ctx_rmv:"外す", ctx_ren:"名前の変更", ctx_mov:"リストに移動", ctx_opn:"本を開く", set_app:"アプリ設定", set_lang:"言語", set_color:"テーマカラー", empT:"目次がありません", empB:"しおりがありません", src_plh:"検索...", btn_lib:"← ライブラリ", tab_toc:"目次", tab_bm:"しおり", tab_srch:"検索", read_set:"読書設定", th_set:"背景", th_lgt:"☀️ 明るい", th_sep:"🍵 セピア", th_drk:"🌙 暗い", fz_set:"文字サイズ", zm_set:"ズーム", ly_set:"レイアウト", ly_s:"単一", ly_d:"二重", ff_set:"フォント", lh_set:"行間", lh_n:"狭い", lh_m:"標準", lh_w:"広い", st_set:"統計", main_col:"メインライブラリ", loading:"読み込み中...", drop_add:"ドロップして追加", srch_found:"件見つかりました", srch_not:"見つかりません", moved:"移動しました ✓", added:"追加されました ✓", renamed:"更新しました ✓", removed:"削除しました", ai_set:"✨ AI シャープ化 (Beta)", add_desc:"PDF、EPUB、またはTXTファイルを選択してください。", sel_file:"ファイルを選択" },
-  es: { app_title:"LIKE MY BOOK CASE", app_sub:"Tu Biblioteca", add_btn:"＋ Añadir Libro", all_books:"📚 Todos los Libros", new_list:"+ Nueva Lista", stat_tot:"Total", stat_done:"Fin", stat_rd:"Leyendo", stat_un:"No Leído", ok:"Aceptar", can:"Cancelar", save:"Guardar", ctx_del:"Eliminar", ctx_rmv:"Quitar", ctx_ren:"Renombrar", ctx_mov:"Mover a lista", ctx_opn:"Abrir Libro", set_app:"Ajustes", set_lang:"Idioma", set_color:"Tema", empT:"Sin índice.", empB:"Sin marcas.", src_plh:"Buscar...", btn_lib:"← Biblioteca", tab_toc:"Índice", tab_bm:"Marcas", tab_srch:"Buscar", read_set:"Ajustes de lectura", th_set:"Fondo", th_lgt:"☀️ Claro", th_sep:"🍵 Sepia", th_drk:"🌙 Oscuro", fz_set:"Tamaño", zm_set:"Zoom", ly_set:"Diseño", ly_s:"Simple", ly_d:"Doble", ff_set:"Fuente", lh_set:"Interlineado", lh_n:"Estrecho", lh_m:"Normal", lh_w:"Ancho", st_set:"Estadísticas", main_col:"Biblioteca principal", loading:"Cargando...", drop_add:"Soltar para añadir", srch_found:"encontrado", srch_not:"No encontrado", moved:"Movido ✓", added:"añadido ✓", renamed:"Actualizado ✓", removed:"Eliminado", ai_set:"✨ Mejora de IA (Beta)", add_desc:"Seleccione un archivo PDF, EPUB o TXT.", sel_file:"Seleccionar" },
-  fr: { app_title:"LIKE MY BOOK CASE", app_sub:"Votre Bibliothèque", add_btn:"＋ Ajouter un livre", all_books:"📚 Tous les livres", new_list:"+ Nouvelle liste", stat_tot:"Total", stat_done:"Fini", stat_rd:"En cours", stat_un:"Non lu", ok:"OK", can:"Annuler", save:"Enregistrer", ctx_del:"Supprimer", ctx_rmv:"Retirer", ctx_ren:"Renommer", ctx_mov:"Déplacer", ctx_opn:"Ouvrir", set_app:"Paramètres", set_lang:"Langue", set_color:"Thème", empT:"Pas de sommaire.", empB:"Pas de signets.", src_plh:"Recherche...", btn_lib:"← Bibliothèque", tab_toc:"Sommaire", tab_bm:"Signets", tab_srch:"Chercher", read_set:"Paramètres de lecture", th_set:"Fond", th_lgt:"☀️ Clair", th_sep:"🍵 Sépia", th_drk:"🌙 Sombre", fz_set:"Taille", zm_set:"Zoom", ly_set:"Mise en page", ly_s:"Simple", ly_d:"Double", ff_set:"Police", lh_set:"Interligne", lh_n:"Étroit", lh_m:"Normal", lh_w:"Large", st_set:"Stats", main_col:"Bibliothèque principale", loading:"Chargement...", drop_add:"Déposer pour ajouter", srch_found:"trouvé", srch_not:"Introuvable", moved:"Déplacé ✓", added:"ajouté ✓", renamed:"Mis à jour ✓", removed:"Retiré", ai_set:"✨ Amélioration IA (Beta)", add_desc:"Sélectionnez un fichier PDF, EPUB ou TXT.", sel_file:"Choisir" },
-  de: { app_title:"LIKE MY BOOK CASE", app_sub:"Deine Bibliothek", add_btn:"＋ Buch hinzufügen", all_books:"📚 Alle Bücher", new_list:"+ Neue Liste", stat_tot:"Gesamt", stat_done:"Fertig", stat_rd:"Lesen", stat_un:"Ungelesen", ok:"OK", can:"Abbrechen", save:"Speichern", ctx_del:"Löschen", ctx_rmv:"Entfernen", ctx_ren:"Umbenennen", ctx_mov:"Verschieben", ctx_opn:"Öffnen", set_app:"Einstellungen", set_lang:"Sprache", set_color:"Thema", empT:"Kein Inhaltsverzeichnis.", empB:"Keine Lesezeichen.", src_plh:"Suchen...", btn_lib:"← Bibliothek", tab_toc:"Inhalt", tab_bm:"Lesezeichen", tab_srch:"Suche", read_set:"Leseeinstellungen", th_set:"Hintergrund", th_lgt:"☀️ Hell", th_sep:"🍵 Sepia", th_drk:"🌙 Dunkel", fz_set:"Schriftgröße", zm_set:"Zoom", ly_set:"Layout", ly_s:"Einzeln", ly_d:"Doppelt", ff_set:"Schriftart", lh_set:"Zeilenabstand", lh_n:"Eng", lh_m:"Normal", lh_w:"Breit", st_set:"Statistiken", main_col:"Hauptbibliothek", loading:"Wird geladen...", drop_add:"Zum Hinzufügen ablegen", srch_found:"gefunden", srch_not:"Nicht gefunden", moved:"Verschoben ✓", added:"hinzugefügt ✓", renamed:"Aktualisiert ✓", removed:"Entfernt", ai_set:"✨ KI-Verbesserung (Beta)", add_desc:"Wählen Sie eine PDF-, EPUB- oder TXT-Datei.", sel_file:"Datei wählen" },
-  it: { app_title:"LIKE MY BOOK CASE", app_sub:"La Tua Biblioteca", add_btn:"＋ Aggiungi libro", all_books:"📚 Tutti i libri", new_list:"+ Nuova lista", stat_tot:"Totale", stat_done:"Finito", stat_rd:"In lettura", stat_un:"Non letto", ok:"OK", can:"Annulla", save:"Salva", ctx_del:"Elimina", ctx_rmv:"Rimuovi", ctx_ren:"Rinomina", ctx_mov:"Sposta", ctx_opn:"Apri", set_app:"Impostazioni", set_lang:"Lingua", set_color:"Tema", empT:"Nessun indice.", empB:"Nessun segnalibro.", src_plh:"Cerca...", btn_lib:"← Libreria", tab_toc:"Indice", tab_bm:"Segnalibri", tab_srch:"Cerca", read_set:"Impostazioni lettura", th_set:"Sfondo", th_lgt:"☀️ Chiaro", th_sep:"🍵 Seppia", th_drk:"🌙 Scuro", fz_set:"Dimensione", zm_set:"Zoom", ly_set:"Layout", ly_s:"Singolo", ly_d:"Doppio", ff_set:"Carattere", lh_set:"Interlinea", lh_n:"Stretto", lh_m:"Normale", lh_w:"Largo", st_set:"Statistiche", main_col:"Libreria principale", loading:"Caricamento...", drop_add:"Rilascia per aggiungere", srch_found:"trovati", srch_not:"Non trovato", moved:"Spostato ✓", added:"aggiunto ✓", renamed:"Aggiornato ✓", removed:"Rimosso", ai_set:"✨ Miglioramento IA (Beta)", add_desc:"Seleziona un file PDF, EPUB o TXT.", sel_file:"Scegli file" },
-  pt: { app_title:"LIKE MY BOOK CASE", app_sub:"Sua Biblioteca", add_btn:"＋ Adicionar Livro", all_books:"📚 Todos os Livros", new_list:"+ Nova Lista", stat_tot:"Total", stat_done:"Concluído", stat_rd:"Lendo", stat_un:"Não Lido", ok:"OK", can:"Cancelar", save:"Salvar", ctx_del:"Excluir", ctx_rmv:"Remover", ctx_ren:"Renomear", ctx_mov:"Mover", ctx_opn:"Abrir", set_app:"Configurações", set_lang:"Idioma", set_color:"Tema", empT:"Sem índice.", empB:"Sem marcadores.", src_plh:"Buscar...", btn_lib:"← Biblioteca", tab_toc:"Índice", tab_bm:"Marcadores", tab_srch:"Buscar", read_set:"Configurações de leitura", th_set:"Fundo", th_lgt:"☀️ Claro", th_sep:"🍵 Sépia", th_drk:"🌙 Escuro", fz_set:"Tamanho", zm_set:"Zoom", ly_set:"Layout", ly_s:"Simples", ly_d:"Duplo", ff_set:"Fonte", lh_set:"Espaçamento", lh_n:"Estreito", lh_m:"Normal", lh_w:"Largo", st_set:"Estatísticas", main_col:"Biblioteca principal", loading:"Carregando...", drop_add:"Solte para adicionar", srch_found:"encontrado", srch_not:"Não encontrado", moved:"Movido ✓", added:"adicionado ✓", renamed:"Atualizado ✓", removed:"Removido", ai_set:"✨ Melhoria por IA (Beta)", add_desc:"Selecione um arquivo PDF, EPUB ou TXT.", sel_file:"Selecionar arquivo" },
-  ru: { app_title:"LIKE MY BOOK CASE", app_sub:"Ваша библиотека", add_btn:"＋ Добавить", all_books:"📚 Все книги", new_list:"+ Новый список", stat_tot:"Всего", stat_done:"Прочитано", stat_rd:"Читаю", stat_un:"Не прочитано", ok:"ОК", can:"Отмена", save:"Сохранить", ctx_del:"Удалить", ctx_rmv:"Убрать", ctx_ren:"Переименовать", ctx_mov:"Переместить", ctx_opn:"Открыть", set_app:"Настройки", set_lang:"Язык", set_color:"Тема", empT:"Нет оглавления.", empB:"Нет закладок.", src_plh:"Поиск...", btn_lib:"← Библиотека", tab_toc:"Оглавление", tab_bm:"Закладки", tab_srch:"Поиск", read_set:"Настройки чтения", th_set:"Фон", th_lgt:"☀️ Светлый", th_sep:"🍵 Сепия", th_drk:"🌙 Темный", fz_set:"Размер", zm_set:"Масштаб", ly_set:"Макет", ly_s:"Одна", ly_d:"Две", ff_set:"Шрифт", lh_set:"Интервал", lh_n:"Узкий", lh_m:"Обычный", lh_w:"Широкий", st_set:"Статистика", main_col:"Главная библиотека", loading:"Загрузка...", drop_add:"Перетащите сюда", srch_found:"найдено", srch_not:"Не найдено", moved:"Перемещено ✓", added:"добавлено ✓", renamed:"Обновлено ✓", removed:"Удалено", ai_set:"✨ ИИ-улучшение (Бета)", add_desc:"Выберите файл PDF, EPUB или TXT.", sel_file:"Выбрать файл" },
-  ar: { app_title:"LIKE MY BOOK CASE", app_sub:"مكتبتك الرقمية", add_btn:"＋ أضف كتاب", all_books:"📚 جميع الكتب", new_list:"+ قائمة جديدة", stat_tot:"المجموع", stat_done:"مكتمل", stat_rd:"يقرأ", stat_un:"غير مقروء", ok:"موافق", can:"إلغاء", save:"حفظ", ctx_del:"حذف", ctx_rmv:"إزالة", ctx_ren:"إعادة تسمية", ctx_mov:"نقل", ctx_opn:"فتح", set_app:"الإعدادات", set_lang:"اللغة", set_color:"السمة", empT:"لا يوجد فهرس.", empB:"لا توجد علامات.", src_plh:"بحث...", btn_lib:"← المكتبة", tab_toc:"الفهرس", tab_bm:"العلامات", tab_srch:"بحث", read_set:"إعدادات القراءة", th_set:"الخلفية", th_lgt:"☀️ فاتح", th_sep:"🍵 بني", th_drk:"🌙 داكن", fz_set:"الخط", zm_set:"تكبير", ly_set:"التخطيط", ly_s:"مفرد", ly_d:"مزدوج", ff_set:"الخط", lh_set:"التباعد", lh_n:"ضيق", lh_m:"عادي", lh_w:"واسع", st_set:"إحصائيات", main_col:"المكتبة الرئيسية", loading:"جارٍ التحميل...", drop_add:"أفلت للإضافة", srch_found:"تم العثور", srch_not:"لم يتم العثور", moved:"تم النقل ✓", added:"تم الإضافة ✓", renamed:"تم التحديث ✓", removed:"تمت الإزالة", ai_set:"✨ تحسين الذكاء الاصطناعي (بيتا)", add_desc:"حدد ملف PDF أو EPUB أو TXT.", sel_file:"اختر ملف" }
+  tr: { app_title:"Like My Bookcase", app_sub:"Dijital Kitaplığın", add_btn:"＋ Kitap Ekle", all_books:"📚 Tüm Kitaplar", new_list:"+ Yeni Liste", stat_tot:"Toplam", stat_done:"Bitti", stat_rd:"Okunuyor", stat_un:"Okunmadı", ok:"Tamam", can:"Vazgeç", save:"Kaydet", ctx_del:"Sil", ctx_rmv:"Kaldır", ctx_ren:"Adını Değiştir", ctx_mov:"Listeye Taşı", ctx_opn:"Kitabı Aç", set_app:"Uygulama Ayarları", set_lang:"Dil Seçimi", set_color:"Uygulama Teması", empT:"İçindekiler bulunamadı.", empB:"Henüz işaret yok.", src_plh:"Ara...", btn_lib:"← Kütüphane", tab_toc:"İçindekiler", tab_bm:"İşaretler", tab_srch:"Ara", read_set:"Okuma Ayarları", th_set:"Arka Plan", th_lgt:"☀️ Açık", th_sep:"🍵 Sepya", th_drk:"🌙 Koyu", fz_set:"Yazı Boyutu", zm_set:"Yakınlaştırma", ly_set:"Sayfa Düzeni", ly_s:"Tek", ly_d:"Çift", ff_set:"Yazı Tipi", lh_set:"Satır Aralığı", lh_n:"Dar", lh_m:"Normal", lh_w:"Geniş", st_set:"İstatistik", main_col:"Ana Kitaplığa Taşı", loading:"Yükleniyor...", drop_add:"Bırak ve ekle", srch_found:"bulundu", srch_not:"Bulunamadı", moved:"Taşındı ✓", added:"eklendi ✓", renamed:"Güncellendi ✓", removed:"Kaldırıldı", ai_set:"✨ AI Netleştirme (Beta)", add_desc:"PDF, EPUB veya TXT dosyası seçin.", sel_file:"Dosya Seç" },
+  en: { app_title:"Like My Bookcase", app_sub:"Your Digital Library", add_btn:"＋ Add Book", all_books:"📚 All Books", new_list:"+ New List", stat_tot:"Total", stat_done:"Done", stat_rd:"Reading", stat_un:"Unread", ok:"OK", can:"Cancel", save:"Save", ctx_del:"Delete", ctx_rmv:"Remove", ctx_ren:"Rename", ctx_mov:"Move to List", ctx_opn:"Open Book", set_app:"App Settings", set_lang:"Language", set_color:"App Theme", empT:"No TOC found.", empB:"No bookmarks.", src_plh:"Search...", btn_lib:"← Library", tab_toc:"Contents", tab_bm:"Bookmarks", tab_srch:"Search", read_set:"Reading Settings", th_set:"Background", th_lgt:"☀️ Light", th_sep:"🍵 Sepia", th_drk:"🌙 Dark", fz_set:"Font Size", zm_set:"Zoom", ly_set:"Layout", ly_s:"Single", ly_d:"Double", ff_set:"Font Family", lh_set:"Line Height", lh_n:"Narrow", lh_m:"Normal", lh_w:"Wide", st_set:"Stats", main_col:"Main Library", loading:"Loading...", drop_add:"Drop to add", srch_found:"found", srch_not:"Not found", moved:"Moved ✓", added:"added ✓", renamed:"Updated ✓", removed:"Removed", ai_set:"✨ AI Sharpen (Beta)", add_desc:"Select a PDF, EPUB or TXT file.", sel_file:"Select File" },
+  ja: { app_title:"Like My Bookcase", app_sub:"デジタルライブラリ", add_btn:"＋ 本を追加", all_books:"📚 すべての本", new_list:"+ 新しいリスト", stat_tot:"合計", stat_done:"完了", stat_rd:"読書中", stat_un:"未読", ok:"OK", can:"キャンセル", save:"保存", ctx_del:"削除", ctx_rmv:"外す", ctx_ren:"名前の変更", ctx_mov:"リストに移動", ctx_opn:"本を開く", set_app:"アプリ設定", set_lang:"言語", set_color:"テーマカラー", empT:"目次がありません", empB:"しおりがありません", src_plh:"検索...", btn_lib:"← ライブラリ", tab_toc:"目次", tab_bm:"しおり", tab_srch:"検索", read_set:"読書設定", th_set:"背景", th_lgt:"☀️ 明るい", th_sep:"🍵 セピア", th_drk:"🌙 暗い", fz_set:"文字サイズ", zm_set:"ズーム", ly_set:"レイアウト", ly_s:"単一", ly_d:"二重", ff_set:"フォント", lh_set:"行間", lh_n:"狭い", lh_m:"標準", lh_w:"広い", st_set:"統計", main_col:"メインライブラリ", loading:"読み込み中...", drop_add:"ドロップして追加", srch_found:"件見つかりました", srch_not:"見つかりません", moved:"移動しました ✓", added:"追加されました ✓", renamed:"更新しました ✓", removed:"削除しました", ai_set:"✨ AI シャープ化 (Beta)", add_desc:"PDF、EPUB、またはTXTファイルを選択してください。", sel_file:"ファイルを選択" },
+  es: { app_title:"Like My Bookcase", app_sub:"Tu Biblioteca", add_btn:"＋ Añadir Libro", all_books:"📚 Todos los Libros", new_list:"+ Nueva Lista", stat_tot:"Total", stat_done:"Fin", stat_rd:"Leyendo", stat_un:"No Leído", ok:"Aceptar", can:"Cancelar", save:"Guardar", ctx_del:"Eliminar", ctx_rmv:"Quitar", ctx_ren:"Renombrar", ctx_mov:"Mover a lista", ctx_opn:"Abrir Libro", set_app:"Ajustes", set_lang:"Idioma", set_color:"Tema", empT:"Sin índice.", empB:"Sin marcas.", src_plh:"Buscar...", btn_lib:"← Biblioteca", tab_toc:"Índice", tab_bm:"Marcas", tab_srch:"Buscar", read_set:"Ajustes de lectura", th_set:"Fondo", th_lgt:"☀️ Claro", th_sep:"🍵 Sepia", th_drk:"🌙 Oscuro", fz_set:"Tamaño", zm_set:"Zoom", ly_set:"Diseño", ly_s:"Simple", ly_d:"Doble", ff_set:"Fuente", lh_set:"Interlineado", lh_n:"Estrecho", lh_m:"Normal", lh_w:"Ancho", st_set:"Estadísticas", main_col:"Biblioteca principal", loading:"Cargando...", drop_add:"Soltar para añadir", srch_found:"encontrado", srch_not:"No encontrado", moved:"Movido ✓", added:"añadido ✓", renamed:"Actualizado ✓", removed:"Eliminado", ai_set:"✨ Mejora de IA (Beta)", add_desc:"Seleccione un archivo PDF, EPUB o TXT.", sel_file:"Seleccionar" },
+  fr: { app_title:"Like My Bookcase", app_sub:"Votre Bibliothèque", add_btn:"＋ Ajouter un livre", all_books:"📚 Tous les livres", new_list:"+ Nouvelle liste", stat_tot:"Total", stat_done:"Fini", stat_rd:"En cours", stat_un:"Non lu", ok:"OK", can:"Annuler", save:"Enregistrer", ctx_del:"Supprimer", ctx_rmv:"Retirer", ctx_ren:"Renommer", ctx_mov:"Déplacer", ctx_opn:"Ouvrir", set_app:"Paramètres", set_lang:"Langue", set_color:"Thème", empT:"Pas de sommaire.", empB:"Pas de signets.", src_plh:"Recherche...", btn_lib:"← Bibliothèque", tab_toc:"Sommaire", tab_bm:"Signets", tab_srch:"Chercher", read_set:"Paramètres de lecture", th_set:"Fond", th_lgt:"☀️ Clair", th_sep:"🍵 Sépia", th_drk:"🌙 Sombre", fz_set:"Taille", zm_set:"Zoom", ly_set:"Mise en page", ly_s:"Simple", ly_d:"Double", ff_set:"Police", lh_set:"Interligne", lh_n:"Étroit", lh_m:"Normal", lh_w:"Large", st_set:"Stats", main_col:"Bibliothèque principale", loading:"Chargement...", drop_add:"Déposer pour ajouter", srch_found:"trouvé", srch_not:"Introuvable", moved:"Déplacé ✓", added:"ajouté ✓", renamed:"Mis à jour ✓", removed:"Retiré", ai_set:"✨ Amélioration IA (Beta)", add_desc:"Sélectionnez un fichier PDF, EPUB ou TXT.", sel_file:"Choisir" },
+  de: { app_title:"Like My Bookcase", app_sub:"Deine Bibliothek", add_btn:"＋ Buch hinzufügen", all_books:"📚 Alle Bücher", new_list:"+ Neue Liste", stat_tot:"Gesamt", stat_done:"Fertig", stat_rd:"Lesen", stat_un:"Ungelesen", ok:"OK", can:"Abbrechen", save:"Speichern", ctx_del:"Löschen", ctx_rmv:"Entfernen", ctx_ren:"Umbenennen", ctx_mov:"Verschieben", ctx_opn:"Öffnen", set_app:"Einstellungen", set_lang:"Sprache", set_color:"Thema", empT:"Kein Inhaltsverzeichnis.", empB:"Keine Lesezeichen.", src_plh:"Suchen...", btn_lib:"← Bibliothek", tab_toc:"Inhalt", tab_bm:"Lesezeichen", tab_srch:"Suche", read_set:"Leseeinstellungen", th_set:"Hintergrund", th_lgt:"☀️ Hell", th_sep:"🍵 Sepia", th_drk:"🌙 Dunkel", fz_set:"Schriftgröße", zm_set:"Zoom", ly_set:"Layout", ly_s:"Einzeln", ly_d:"Doppelt", ff_set:"Schriftart", lh_set:"Zeilenabstand", lh_n:"Eng", lh_m:"Normal", lh_w:"Breit", st_set:"Statistiken", main_col:"Hauptbibliothek", loading:"Wird geladen...", drop_add:"Zum Hinzufügen ablegen", srch_found:"gefunden", srch_not:"Nicht gefunden", moved:"Verschoben ✓", added:"hinzugefügt ✓", renamed:"Aktualisiert ✓", removed:"Entfernt", ai_set:"✨ KI-Verbesserung (Beta)", add_desc:"Wählen Sie eine PDF-, EPUB- oder TXT-Datei.", sel_file:"Datei wählen" },
+  it: { app_title:"Like My Bookcase", app_sub:"La Tua Biblioteca", add_btn:"＋ Aggiungi libro", all_books:"📚 Tutti i libri", new_list:"+ Nuova lista", stat_tot:"Totale", stat_done:"Finito", stat_rd:"In lettura", stat_un:"Non letto", ok:"OK", can:"Annulla", save:"Salva", ctx_del:"Elimina", ctx_rmv:"Rimuovi", ctx_ren:"Rinomina", ctx_mov:"Sposta", ctx_opn:"Apri", set_app:"Impostazioni", set_lang:"Lingua", set_color:"Tema", empT:"Nessun indice.", empB:"Nessun segnalibro.", src_plh:"Cerca...", btn_lib:"← Libreria", tab_toc:"Indice", tab_bm:"Segnalibri", tab_srch:"Cerca", read_set:"Impostazioni lettura", th_set:"Sfondo", th_lgt:"☀️ Chiaro", th_sep:"🍵 Seppia", th_drk:"🌙 Scuro", fz_set:"Dimensione", zm_set:"Zoom", ly_set:"Layout", ly_s:"Singolo", ly_d:"Doppio", ff_set:"Carattere", lh_set:"Interlinea", lh_n:"Stretto", lh_m:"Normale", lh_w:"Largo", st_set:"Statistiche", main_col:"Libreria principale", loading:"Caricamento...", drop_add:"Rilascia per aggiungere", srch_found:"trovati", srch_not:"Non trovato", moved:"Spostato ✓", added:"aggiunto ✓", renamed:"Aggiornato ✓", removed:"Rimosso", ai_set:"✨ Miglioramento IA (Beta)", add_desc:"Seleziona un file PDF, EPUB o TXT.", sel_file:"Scegli file" },
+  pt: { app_title:"Like My Bookcase", app_sub:"Sua Biblioteca", add_btn:"＋ Adicionar Livro", all_books:"📚 Todos os Livros", new_list:"+ Nova Lista", stat_tot:"Total", stat_done:"Concluído", stat_rd:"Lendo", stat_un:"Não Lido", ok:"OK", can:"Cancelar", save:"Salvar", ctx_del:"Excluir", ctx_rmv:"Remover", ctx_ren:"Renomear", ctx_mov:"Mover", ctx_opn:"Abrir", set_app:"Configurações", set_lang:"Idioma", set_color:"Tema", empT:"Sem índice.", empB:"Sem marcadores.", src_plh:"Buscar...", btn_lib:"← Biblioteca", tab_toc:"Índice", tab_bm:"Marcadores", tab_srch:"Buscar", read_set:"Configurações de leitura", th_set:"Fundo", th_lgt:"☀️ Claro", th_sep:"🍵 Sépia", th_drk:"🌙 Escuro", fz_set:"Tamanho", zm_set:"Zoom", ly_set:"Layout", ly_s:"Simples", ly_d:"Duplo", ff_set:"Fonte", lh_set:"Espaçamento", lh_n:"Estreito", lh_m:"Normal", lh_w:"Largo", st_set:"Estatísticas", main_col:"Biblioteca principal", loading:"Carregando...", drop_add:"Solte para adicionar", srch_found:"encontrado", srch_not:"Não encontrado", moved:"Movido ✓", added:"adicionado ✓", renamed:"Atualizado ✓", removed:"Removido", ai_set:"✨ Melhoria por IA (Beta)", add_desc:"Selecione um arquivo PDF, EPUB ou TXT.", sel_file:"Selecionar arquivo" },
+  ru: { app_title:"Like My Bookcase", app_sub:"Ваша библиотека", add_btn:"＋ Добавить", all_books:"📚 Все книги", new_list:"+ Новый список", stat_tot:"Всего", stat_done:"Прочитано", stat_rd:"Читаю", stat_un:"Не прочитано", ok:"ОК", can:"Отмена", save:"Сохранить", ctx_del:"Удалить", ctx_rmv:"Убрать", ctx_ren:"Переименовать", ctx_mov:"Переместить", ctx_opn:"Открыть", set_app:"Настройки", set_lang:"Язык", set_color:"Тема", empT:"Нет оглавления.", empB:"Нет закладок.", src_plh:"Поиск...", btn_lib:"← Библиотека", tab_toc:"Оглавление", tab_bm:"Закладки", tab_srch:"Поиск", read_set:"Настройки чтения", th_set:"Фон", th_lgt:"☀️ Светлый", th_sep:"🍵 Сепия", th_drk:"🌙 Темный", fz_set:"Размер", zm_set:"Масштаб", ly_set:"Макет", ly_s:"Одна", ly_d:"Две", ff_set:"Шрифт", lh_set:"Интервал", lh_n:"Узкий", lh_m:"Обычный", lh_w:"Широкий", st_set:"Статистика", main_col:"Главная библиотека", loading:"Загрузка...", drop_add:"Перетащите сюда", srch_found:"найдено", srch_not:"Не найдено", moved:"Перемещено ✓", added:"добавлено ✓", renamed:"Обновлено ✓", removed:"Удалено", ai_set:"✨ ИИ-улучшение (Бета)", add_desc:"Выберите файл PDF, EPUB или TXT.", sel_file:"Выбрать файл" },
+  ar: { app_title:"Like My Bookcase", app_sub:"مكتبتك الرقمية", add_btn:"＋ أضف كتاب", all_books:"📚 جميع الكتب", new_list:"+ قائمة جديدة", stat_tot:"المجموع", stat_done:"مكتمل", stat_rd:"يقرأ", stat_un:"غير مقروء", ok:"موافق", can:"إلغاء", save:"حفظ", ctx_del:"حذف", ctx_rmv:"إزالة", ctx_ren:"إعادة تسمية", ctx_mov:"نقل", ctx_opn:"فتح", set_app:"الإعدادات", set_lang:"اللغة", set_color:"السمة", empT:"لا يوجد فهرس.", empB:"لا توجد علامات.", src_plh:"بحث...", btn_lib:"← المكتبة", tab_toc:"الفهرس", tab_bm:"العلامات", tab_srch:"بحث", read_set:"إعدادات القراءة", th_set:"الخلفية", th_lgt:"☀️ فاتح", th_sep:"🍵 بني", th_drk:"🌙 داكن", fz_set:"الخط", zm_set:"تكبير", ly_set:"التخطيط", ly_s:"مفرد", ly_d:"مزدوج", ff_set:"الخط", lh_set:"التباعد", lh_n:"ضيق", lh_m:"عادي", lh_w:"واسع", st_set:"إحصائيات", main_col:"المكتبة الرئيسية", loading:"جارٍ التحميل...", drop_add:"أفلت للإضافة", srch_found:"تم العثور", srch_not:"لم يتم العثور", moved:"تم النقل ✓", added:"تم الإضافة ✓", renamed:"تم التحديث ✓", removed:"تمت الإزالة", ai_set:"✨ تحسين الذكاء الاصطناعي (بيتا)", add_desc:"حدد ملف PDF أو EPUB أو TXT.", sel_file:"اختر ملف" }
 };
 
 // ── INDEXED DB ──
@@ -649,19 +653,25 @@ function renderCols() {
     const btn = document.createElement('button');
     btn.className = 'col-tab' + (ST.activeCol === c.id ? ' on' : '');
     btn.textContent = c.name;
+    
+    // Normal Tıklama
     btn.addEventListener('click', () => { ST.activeCol = c.id; renderCols(); renderLib(); });
+    // Sürükle Bırak İşlemleri
     btn.addEventListener('dragover', e => { e.preventDefault(); btn.classList.add('drag-over'); });
     btn.addEventListener('dragleave', () => btn.classList.remove('drag-over'));
     btn.addEventListener('drop', e => dropOnCol(e, c.id, btn));
     
-    btn.addEventListener('contextmenu', e => {
-      e.preventDefault();
-      ST.ctxCol = c;
-      const m = document.getElementById('ctx-col');
-      m.classList.add('show');
-      m.style.left = Math.min(e.clientX, window.innerWidth-168) + 'px';
-      m.style.top = Math.min(e.clientY, window.innerHeight-120) + 'px';
-    });
+    // İPad / Mobil Uzun Basma Algılayıcısı (Sağ Tık Menüsü İçin)
+    let colPressTimer;
+    btn.addEventListener('contextmenu', e => { e.preventDefault(); showColCtx(e, c); });
+    btn.addEventListener('touchstart', e => {
+      const cx = e.touches[0].clientX; const cy = e.touches[0].clientY;
+      colPressTimer = setTimeout(() => { showColCtx({ preventDefault:()=>{}, clientX:cx, clientY:cy }, c); }, 500);
+    }, {passive: true});
+    btn.addEventListener('touchend', () => clearTimeout(colPressTimer));
+    btn.addEventListener('touchmove', () => clearTimeout(colPressTimer));
+    btn.addEventListener('touchcancel', () => clearTimeout(colPressTimer));
+
     cb.appendChild(btn);
   });
 
@@ -709,8 +719,19 @@ function renderLib(){
     const d=document.createElement('div');
     d.className='bk'; d.dataset.id=b.id; d.draggable=true;
     
+    // Normal Tıklama
     d.addEventListener('click',()=>openBook(b));
-    d.addEventListener('contextmenu',e=>showCtx(e,b));
+    
+    // İPad / Mobil Uzun Basma Algılayıcısı (Sağ Tık Menüsü İçin)
+    let bkPressTimer;
+    d.addEventListener('contextmenu', e => { e.preventDefault(); showCtx(e, b); });
+    d.addEventListener('touchstart', e => {
+      const cx = e.touches[0].clientX; const cy = e.touches[0].clientY;
+      bkPressTimer = setTimeout(() => { showCtx({ preventDefault:()=>{}, clientX:cx, clientY:cy }, b); }, 500);
+    }, {passive: true});
+    d.addEventListener('touchend', () => clearTimeout(bkPressTimer));
+    d.addEventListener('touchmove', () => clearTimeout(bkPressTimer));
+    d.addEventListener('touchcancel', () => clearTimeout(bkPressTimer));
     
     d.addEventListener('dragstart', e => {
       e.dataTransfer.setData('text/plain', b.id);
@@ -1145,11 +1166,25 @@ document.addEventListener('pointerdown', e => {
 });
 
 function showCtx(e,book){
-  e.preventDefault(); ST.ctxBook=book;
+  if(e.preventDefault) e.preventDefault(); 
+  ST.ctxBook=book;
   const m=document.getElementById('ctx');
   m.classList.add('show');
-  m.style.left=Math.min(e.clientX,window.innerWidth-168)+'px';
-  m.style.top=Math.min(e.clientY,window.innerHeight-120)+'px';
+  const cx = e.clientX ?? (e.touches && e.touches[0].clientX) ?? 0;
+  const cy = e.clientY ?? (e.touches && e.touches[0].clientY) ?? 0;
+  m.style.left=Math.min(cx,window.innerWidth-168)+'px';
+  m.style.top=Math.min(cy,window.innerHeight-120)+'px';
+}
+
+function showColCtx(e, col){
+  if(e.preventDefault) e.preventDefault(); 
+  ST.ctxCol=col;
+  const m=document.getElementById('ctx-col');
+  m.classList.add('show');
+  const cx = e.clientX ?? (e.touches && e.touches[0].clientX) ?? 0;
+  const cy = e.clientY ?? (e.touches && e.touches[0].clientY) ?? 0;
+  m.style.left=Math.min(cx,window.innerWidth-168)+'px';
+  m.style.top=Math.min(cy,window.innerHeight-120)+'px';
 }
 
 function showModal(title,body,btns){
@@ -1293,7 +1328,18 @@ rc.addEventListener('pointerup', e => {
   const now = Date.now();
   if(now - lastTapTime < 300) {
       clearTimeout(tapTimer);
-      ST.cfg.zoom = 1.0;
+      
+      const rcH = rc.clientHeight - 40;
+      const rcW = rc.clientWidth - 32;
+      const fitH = rcH / (rcW * 1.414);
+      const targetFitZoom = Math.max(0.3, Math.min(fitH, 1.0));
+      
+      if (Math.abs(ST.cfg.zoom - 1.0) < 0.05) {
+         ST.cfg.zoom = parseFloat(targetFitZoom.toFixed(2));
+      } else {
+         ST.cfg.zoom = 1.0;
+      }
+      
       document.getElementById('cwrap').style.transform = '';
       saveLocal(); syncSettingsUI();
       if(ST.cur?.type==='pdf') renderPDF(ST.page);
